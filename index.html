@@ -1,0 +1,283 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- SEO Optimization -->
+  <title>CoinCraft - Premium Personal Expense Tracker</title>
+  <meta name="description"
+    content="A beautiful, mobile-friendly expense tracker and personal ledger. Keep track of your balances, income, expenses, and visual category breakdowns locally." />
+
+  <!-- Stylesheets -->
+  <link rel="stylesheet" href="styles.css" />
+</head>
+
+<body>
+  <!-- Header Navigation -->
+  <header>
+    <div class="header-container">
+      <div class="logo-section">
+        <div class="logo-icon">
+          <i data-lucide="landmark" style="width: 1.25rem; height: 1.25rem;"></i>
+        </div>
+        <div class="logo-text">
+          <h1>CoinCraft</h1>
+          <p>Personal Ledger</p>
+        </div>
+      </div>
+
+      <div class="controls-section">
+        <div class="currency-badge">
+          <span class="currency-label">Currency:</span>
+          <select id="currency-selector" class="currency-select">
+            <option value="$">USD ($)</option>
+            <option value="€">EUR (€)</option>
+            <option value="£">GBP (£)</option>
+            <option value="₹">INR (₹)</option>
+            <option value="¥">JPY (¥)</option>
+          </select>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Workspace -->
+  <main>
+    <!-- Section 1: Balance & Statistics Cards -->
+    <section id="metrics-panel" class="metrics-grid" aria-label="Financial Metrics Summary">
+      <!-- Balance Card -->
+      <div id="balance-card" class="card balance-card positive">
+        <div class="balance-container">
+          <div class="balance-info">
+            <span class="balance-label">Total Balance</span>
+            <span id="balance-amount" class="balance-amount">$0.00</span>
+          </div>
+          <div class="balance-icon-container">
+            <i data-lucide="wallet" style="width: 1.5rem; height: 1.5rem;"></i>
+          </div>
+        </div>
+      </div>
+
+      <!-- Income Card -->
+      <div id="income-card" class="card sub-metric-card">
+        <div class="sub-metric-header">
+          <div class="sub-metric-info">
+            <span class="sub-metric-label">Total Income</span>
+            <span id="income-amount" class="sub-metric-amount income">$0.00</span>
+          </div>
+          <div class="sub-metric-icon income-icon-box">
+            <i data-lucide="arrow-up-right" style="width: 1.25rem; height: 1.25rem;"></i>
+          </div>
+        </div>
+        <div class="progress-bar-container">
+          <div id="income-progress" class="progress-bar income"></div>
+        </div>
+      </div>
+
+      <!-- Expenses Card -->
+      <div id="expenses-card" class="card sub-metric-card">
+        <div class="sub-metric-header">
+          <div class="sub-metric-info">
+            <span class="sub-metric-label">Total Expenses</span>
+            <span id="expenses-amount" class="sub-metric-amount expense">$0.00</span>
+          </div>
+          <div class="sub-metric-icon expense-icon-box">
+            <i data-lucide="arrow-down-right" style="width: 1.25rem; height: 1.25rem;"></i>
+          </div>
+        </div>
+        <div class="progress-bar-container">
+          <div id="expenses-progress" class="progress-bar expense"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 2: Dashboard Ledger Grid -->
+    <div class="dashboard-grid">
+      <!-- Left: Form inputs & Visual analytics -->
+      <section class="left-column" aria-label="Transaction Operations and Charts">
+        <!-- Transaction Form -->
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <h3 class="card-title">
+                <i data-lucide="plus-circle"></i>
+                Add Transaction
+              </h3>
+            </div>
+            <span class="card-subtitle">Create a new record</span>
+          </div>
+
+          <form id="transaction-form" autocomplete="off">
+            <!-- Type Toggle Buttons (Expense vs Income) -->
+            <div class="form-group">
+              <span class="form-label">Transaction Type</span>
+              <div class="tabs-container">
+                <button type="button" id="toggle-expense-btn" class="tab-btn active expense">Expense</button>
+                <button type="button" id="toggle-income-btn" class="tab-btn income">Income</button>
+              </div>
+            </div>
+
+            <!-- Description input -->
+            <div class="form-group">
+              <label for="description" class="form-label">Description</label>
+              <div class="input-container">
+                <input type="text" id="description" class="input-field" placeholder="e.g. Weekly Groceries" required />
+              </div>
+            </div>
+
+            <!-- Amount & Category Grid -->
+            <div class="form-row">
+              <!-- Amount input -->
+              <div class="form-group">
+                <label for="amount" class="form-label">Amount</label>
+                <div class="input-container">
+                  <span id="amount-currency-symbol" class="input-field-prefix">$</span>
+                  <input type="number" id="amount" class="input-field input-with-prefix" step="0.01" min="0.01"
+                    placeholder="0.00" required />
+                </div>
+              </div>
+
+              <!-- Category select -->
+              <div class="form-group">
+                <label for="category" class="form-label">Category</label>
+                <div class="select-container">
+                  <select id="category" class="select-field">
+                    <option value="Food">Food</option>
+                    <option value="Transport">Transport</option>
+                    <option value="Bills">Bills</option>
+                    <option value="Shopping">Shopping</option>
+                    <option value="Other">Other</option>
+                  </select>
+                  <div class="select-arrow">
+                    <i data-lucide="list-filter" style="width: 1rem; height: 1rem;"></i>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Form Validation Message Box -->
+            <div id="form-error" class="form-error"></div>
+
+            <!-- Submit button -->
+            <button type="submit" id="submit-transaction-btn" class="btn-submit expense">
+              <i data-lucide="plus-circle" style="width: 1rem; height: 1rem;"></i>
+              <span id="submit-btn-text">Save Expense</span>
+            </button>
+          </form>
+        </div>
+
+        <!-- Analytics Chart Box -->
+        <div id="category-chart-container" class="card">
+          <div class="card-header">
+            <h3 class="card-title">
+              <i data-lucide="pie-chart"></i>
+              Spending Breakdown
+            </h3>
+            <span class="card-subtitle">Expenses by category</span>
+          </div>
+
+          <!-- Dynamic Donut Chart or Empty state container -->
+          <div id="chart-dynamic-content">
+            <!-- JS will render donut chart and category rows here -->
+          </div>
+        </div>
+      </section>
+
+      <!-- Right: Filterable ledger history -->
+      <section id="ledger-history-section" class="card" aria-label="Transaction Logs history">
+        <div class="card-header history-header">
+          <div>
+            <h3 class="card-title">
+              <i data-lucide="receipt-text"></i>
+              History
+            </h3>
+            <p id="ledger-count-sub" class="card-subtitle">Showing 0 of 0 records</p>
+          </div>
+          <button id="clear-all-btn" class="btn-clear-all hidden">
+            <i data-lucide="refresh-cw" style="width: 0.875rem; height: 0.875rem;"></i>
+            Clear All
+          </button>
+        </div>
+
+        <!-- Filter Toolbar controls -->
+        <div class="filters-toolbar">
+          <!-- Search bar input -->
+          <div class="search-container">
+            <span class="search-icon">
+              <i data-lucide="search" style="width: 0.875rem; height: 0.875rem;"></i>
+            </span>
+            <input type="text" id="search-transactions" class="input-field search-input"
+              placeholder="Search description..." />
+          </div>
+
+          <!-- Type filters select -->
+          <div class="select-container">
+            <select id="filter-type" class="select-field">
+              <option value="all">All Types</option>
+              <option value="income">Income Only</option>
+              <option value="expense">Expense Only</option>
+            </select>
+            <div class="select-arrow">
+              <i data-lucide="list-filter" style="width: 0.875rem; height: 0.875rem;"></i>
+            </div>
+          </div>
+
+          <!-- Category filters select -->
+          <div class="select-container">
+            <select id="filter-category" class="select-field">
+              <option value="all">All Categories</option>
+              <option value="Food">Food</option>
+              <option value="Transport">Transport</option>
+              <option value="Bills">Bills</option>
+              <option value="Shopping">Shopping</option>
+              <option value="Other">Other</option>
+            </select>
+            <div class="select-arrow">
+              <i data-lucide="list-filter" style="width: 0.875rem; height: 0.875rem;"></i>
+            </div>
+          </div>
+
+          <!-- Sort option dropdown selector -->
+          <div class="select-container">
+            <select id="sort-by" class="select-field">
+              <option value="newest">Newest First</option>
+              <option value="oldest">Oldest First</option>
+              <option value="amount-high">Highest Amount</option>
+              <option value="amount-low">Lowest Amount</option>
+            </select>
+            <div class="select-arrow">
+              <i data-lucide="list-filter" style="width: 0.875rem; height: 0.875rem;"></i>
+            </div>
+          </div>
+        </div>
+
+        <!-- Transaction List viewport -->
+        <div id="transactions-scroll-area" class="ledger-scroll-area">
+          <!-- JS will inject transaction items or empty state message -->
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <!-- Footer Information -->
+  <footer>
+    <div class="footer-container">
+      <div class="footer-status">
+        <span class="status-dot"></span>
+        <span>Secure Local-First Ledger Engine Active</span>
+      </div>
+      <p>CoinCraft Expense Tracker &copy; <span id="current-year">2026</span>
+      </p>
+    </div>
+  </footer>
+
+  <!-- Scripts Integration -->
+  <!-- Lucide icons CDN -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <!-- Main JS module -->
+  <script src="app.js"></script>
+</body>
+
+</html>
