@@ -21,4 +21,4 @@ No build step or dependencies required.
 - JavaScript (ES6+)
 
 ## Live Demo
-[Add your deployed link here — e.g. Vercel/Netlify]
+https://coincraft-expense-tracker.vercel.app/
