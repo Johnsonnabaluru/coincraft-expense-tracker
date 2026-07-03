@@ -29,6 +29,18 @@
   --color-text-light: #94a3b8;
   --color-bg-muted: #f1f5f9;
 
+  /* Payment Method Colors */
+  --pm-cash: #22c55e;
+  --pm-cash-light: rgba(34, 197, 94, 0.1);
+  --pm-debit: #3b82f6;
+  --pm-debit-light: rgba(59, 130, 246, 0.1);
+  --pm-credit: #f43f5e;
+  --pm-credit-light: rgba(244, 63, 94, 0.1);
+  --pm-upi: #8b5cf6;
+  --pm-upi-light: rgba(139, 92, 246, 0.1);
+  --pm-netbanking: #f59e0b;
+  --pm-netbanking-light: rgba(245, 158, 11, 0.1);
+
   /* Shadows */
   --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.05), 0 1px 2px -1px rgba(0, 0, 0, 0.05);
   --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
@@ -87,10 +99,11 @@ header {
 .header-container {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 1rem 1.5rem;
+  padding: 0.875rem 1rem;
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 0.5rem;
 }
 
 .logo-section {
@@ -108,6 +121,7 @@ header {
   align-items: center;
   justify-content: center;
   box-shadow: 0 4px 10px rgba(79, 70, 229, 0.3);
+  flex-shrink: 0;
 }
 
 .logo-text h1 {
@@ -154,6 +168,13 @@ header {
   color: var(--color-text-muted);
   text-transform: uppercase;
   letter-spacing: 0.05em;
+  white-space: nowrap;
+}
+
+@media (max-width: 360px) {
+  .currency-label {
+    display: none;
+  }
 }
 
 .currency-select {
@@ -172,10 +193,17 @@ main {
   max-width: 1200px;
   width: 100%;
   margin: 0 auto;
-  padding: 2rem 1.5rem;
+  padding: 1.5rem 1rem;
   display: flex;
   flex-direction: column;
-  gap: 2rem;
+  gap: 1.5rem;
+}
+
+@media (min-width: 640px) {
+  main {
+    padding: 2rem 1.5rem;
+    gap: 2rem;
+  }
 }
 
 /* Cards Base */
@@ -183,9 +211,15 @@ main {
   background-color: var(--bg-card);
   border: 1px solid var(--border-color);
   border-radius: var(--radius-lg);
-  padding: 1.5rem;
+  padding: 1.25rem;
   box-shadow: var(--shadow-sm);
   transition: transform var(--transition-normal), box-shadow var(--transition-normal);
+}
+
+@media (min-width: 640px) {
+  .card {
+    padding: 1.5rem;
+  }
 }
 
 .card:hover {
@@ -196,7 +230,17 @@ main {
 .metrics-grid {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 1.25rem;
+  gap: 1rem;
+}
+
+@media (min-width: 480px) {
+  .metrics-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .balance-card {
+    grid-column: span 2;
+  }
 }
 
 @media (min-width: 768px) {
@@ -213,7 +257,13 @@ main {
 .balance-card {
   position: relative;
   overflow: hidden;
-  padding: 2rem;
+  padding: 1.5rem;
+}
+
+@media (min-width: 640px) {
+  .balance-card {
+    padding: 2rem;
+  }
 }
 
 .balance-card::after {
@@ -251,11 +301,23 @@ main {
 }
 
 .balance-amount {
-  font-size: 2.5rem;
+  font-size: 1.75rem;
   font-weight: 800;
   letter-spacing: -0.03em;
   font-family: var(--font-display);
   line-height: 1.1;
+}
+
+@media (min-width: 480px) {
+  .balance-amount {
+    font-size: 2.25rem;
+  }
+}
+
+@media (min-width: 640px) {
+  .balance-amount {
+    font-size: 2.5rem;
+  }
 }
 
 .balance-amount.negative {
@@ -268,6 +330,7 @@ main {
   display: flex;
   align-items: center;
   justify-content: center;
+  flex-shrink: 0;
 }
 
 .balance-card.positive .balance-icon-container {
@@ -308,9 +371,15 @@ main {
 }
 
 .sub-metric-amount {
-  font-size: 1.5rem;
+  font-size: 1.25rem;
   font-weight: 700;
   font-family: var(--font-display);
+}
+
+@media (min-width: 640px) {
+  .sub-metric-amount {
+    font-size: 1.5rem;
+  }
 }
 
 .sub-metric-amount.income {
@@ -327,6 +396,7 @@ main {
   display: flex;
   align-items: center;
   justify-content: center;
+  flex-shrink: 0;
 }
 
 .income-icon-box {
@@ -367,8 +437,14 @@ main {
 .dashboard-grid {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 2rem;
+  gap: 1.5rem;
   align-items: start;
+}
+
+@media (min-width: 640px) {
+  .dashboard-grid {
+    gap: 2rem;
+  }
 }
 
 @media (min-width: 1024px) {
@@ -380,7 +456,13 @@ main {
 .left-column {
   display: flex;
   flex-direction: column;
-  gap: 2rem;
+  gap: 1.5rem;
+}
+
+@media (min-width: 640px) {
+  .left-column {
+    gap: 2rem;
+  }
 }
 
 /* Card Header styles */
@@ -425,10 +507,10 @@ main {
 .form-row {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 1rem;
+  gap: 0 1rem;
 }
 
-@media (min-width: 480px) {
+@media (min-width: 400px) {
   .form-row {
     grid-template-columns: 1fr 1fr;
   }
@@ -470,7 +552,6 @@ main {
 }
 
 .tab-btn.active.expense {
-  background-color: #white;
   color: var(--color-expense);
   box-shadow: var(--shadow-sm);
   background: #ffffff;
@@ -478,11 +559,130 @@ main {
 }
 
 .tab-btn.active.income {
-  background-color: #white;
   color: var(--color-income);
   box-shadow: var(--shadow-sm);
   background: #ffffff;
   border: 1px solid rgba(16, 185, 129, 0.1);
+}
+
+/* Payment Method Pill Buttons */
+.payment-method-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.5rem;
+}
+
+@media (min-width: 480px) {
+  .payment-method-grid {
+    grid-template-columns: repeat(5, 1fr);
+  }
+}
+
+.pm-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.25rem;
+  padding: 0.5rem 0.25rem;
+  border: 1.5px solid var(--border-color);
+  background-color: var(--bg-card);
+  border-radius: 0.625rem;
+  font-size: 0.625rem;
+  font-weight: 700;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  transition: var(--transition-fast);
+  text-transform: uppercase;
+  letter-spacing: 0.025em;
+  line-height: 1.2;
+  text-align: center;
+}
+
+.pm-btn svg {
+  width: 1rem;
+  height: 1rem;
+}
+
+.pm-btn:hover {
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+  background-color: var(--color-primary-light);
+}
+
+.pm-btn.active[data-method="Cash"] {
+  border-color: var(--pm-cash);
+  color: var(--pm-cash);
+  background-color: var(--pm-cash-light);
+}
+
+.pm-btn.active[data-method="Debit Card"] {
+  border-color: var(--pm-debit);
+  color: var(--pm-debit);
+  background-color: var(--pm-debit-light);
+}
+
+.pm-btn.active[data-method="Credit Card"] {
+  border-color: var(--pm-credit);
+  color: var(--pm-credit);
+  background-color: var(--pm-credit-light);
+}
+
+.pm-btn.active[data-method="UPI"] {
+  border-color: var(--pm-upi);
+  color: var(--pm-upi);
+  background-color: var(--pm-upi-light);
+}
+
+.pm-btn.active[data-method="Net Banking"] {
+  border-color: var(--pm-netbanking);
+  color: var(--pm-netbanking);
+  background-color: var(--pm-netbanking-light);
+}
+
+/* Payment Method Transaction Badge */
+.tx-payment-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: 0.5rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding: 0.125rem 0.375rem;
+  border-radius: 0.25rem;
+  border: 1px solid transparent;
+  white-space: nowrap;
+}
+
+.tx-payment-badge.pm-cash {
+  color: var(--pm-cash);
+  background-color: var(--pm-cash-light);
+  border-color: rgba(34, 197, 94, 0.2);
+}
+
+.tx-payment-badge.pm-debit {
+  color: var(--pm-debit);
+  background-color: var(--pm-debit-light);
+  border-color: rgba(59, 130, 246, 0.2);
+}
+
+.tx-payment-badge.pm-credit {
+  color: var(--pm-credit);
+  background-color: var(--pm-credit-light);
+  border-color: rgba(244, 63, 94, 0.2);
+}
+
+.tx-payment-badge.pm-upi {
+  color: var(--pm-upi);
+  background-color: var(--pm-upi-light);
+  border-color: rgba(139, 92, 246, 0.2);
+}
+
+.tx-payment-badge.pm-netbanking {
+  color: var(--pm-netbanking);
+  background-color: var(--pm-netbanking-light);
+  border-color: rgba(245, 158, 11, 0.2);
 }
 
 /* Inputs styling */
@@ -621,7 +821,7 @@ main {
   align-items: center;
 }
 
-@media (min-width: 640px) {
+@media (min-width: 480px) {
   .chart-content {
     grid-template-columns: 5fr 7fr;
   }
@@ -636,8 +836,15 @@ main {
 
 .donut-svg-wrapper {
   position: relative;
-  width: 10rem;
-  height: 10rem;
+  width: 9rem;
+  height: 9rem;
+}
+
+@media (min-width: 480px) {
+  .donut-svg-wrapper {
+    width: 10rem;
+    height: 10rem;
+  }
 }
 
 .donut-svg-wrapper svg {
@@ -716,6 +923,7 @@ main {
   width: 0.625rem;
   height: 0.625rem;
   border-radius: 50%;
+  flex-shrink: 0;
 }
 
 .chart-row-values {
@@ -773,7 +981,7 @@ main {
   align-items: center;
   justify-content: center;
   text-align: center;
-  padding: 3rem 1.5rem;
+  padding: 2.5rem 1.5rem;
 }
 
 .empty-icon-box {
@@ -805,17 +1013,8 @@ main {
 
 /* Transaction List (History) Header Controls */
 .history-header {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
-
-@media (min-width: 640px) {
-  .history-header {
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-between;
-  }
+  flex-wrap: wrap;
+  gap: 0.75rem;
 }
 
 .btn-clear-all {
@@ -831,13 +1030,7 @@ main {
   align-items: center;
   gap: 0.375rem;
   transition: var(--transition-fast);
-  align-self: flex-start;
-}
-
-@media (min-width: 640px) {
-  .btn-clear-all {
-    align-self: auto;
-  }
+  white-space: nowrap;
 }
 
 .btn-clear-all:hover {
@@ -849,21 +1042,33 @@ main {
 /* Filters Toolbar */
 .filters-toolbar {
   display: grid;
-  grid-template-columns: 1fr;
-  gap: 0.75rem;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.6rem;
   margin-top: 1rem;
   margin-bottom: 1.25rem;
+}
+
+.search-full {
+  grid-column: span 2;
 }
 
 @media (min-width: 640px) {
   .filters-toolbar {
     grid-template-columns: repeat(2, 1fr);
   }
+
+  .search-full {
+    grid-column: span 2;
+  }
 }
 
-@media (min-width: 1024px) {
+@media (min-width: 900px) {
   .filters-toolbar {
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: 1.5fr 1.5fr 1fr 1fr 1fr 1fr;
+  }
+
+  .search-full {
+    grid-column: span 1;
   }
 }
 
@@ -886,9 +1091,37 @@ main {
   pointer-events: none;
 }
 
+.date-range-container {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+}
+
+.date-separator {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--color-text-muted);
+}
+
+.date-input {
+  color: var(--color-text-muted);
+  font-size: 0.75rem;
+  padding: 0.625rem 0.5rem;
+}
+
+.date-input::-webkit-calendar-picker-indicator {
+  cursor: pointer;
+  opacity: 0.6;
+  transition: var(--transition-fast);
+}
+
+.date-input::-webkit-calendar-picker-indicator:hover {
+  opacity: 1;
+}
+
 /* Ledger List Elements */
 .ledger-scroll-area {
-  max-height: 480px;
+  max-height: 520px;
   overflow-y: auto;
   padding-right: 0.25rem;
   display: flex;
@@ -919,12 +1152,13 @@ main {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 1rem;
+  padding: 0.875rem;
   background-color: #ffffff;
   border: 1px solid var(--border-color);
   border-radius: var(--radius-md);
   transition: transform var(--transition-normal), border-color var(--transition-fast), box-shadow var(--transition-fast);
   animation: slideIn var(--transition-normal) forwards;
+  gap: 0.5rem;
 }
 
 .transaction-item:hover {
@@ -935,13 +1169,14 @@ main {
 .tx-left {
   display: flex;
   align-items: center;
-  gap: 0.875rem;
+  gap: 0.75rem;
   min-width: 0;
+  flex: 1;
 }
 
 .tx-icon-box {
-  padding: 0.625rem;
-  border-radius: 0.75rem;
+  padding: 0.5rem;
+  border-radius: 0.625rem;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -976,6 +1211,7 @@ main {
 
 .tx-details {
   min-width: 0;
+  flex: 1;
 }
 
 .tx-desc {
@@ -991,8 +1227,9 @@ main {
 .tx-meta {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  margin-top: 0.125rem;
+  gap: 0.375rem;
+  margin-top: 0.2rem;
+  flex-wrap: wrap;
 }
 
 .tx-category-badge {
@@ -1007,7 +1244,7 @@ main {
 }
 
 .tx-date {
-  font-size: 0.75rem;
+  font-size: 0.6875rem;
   font-family: var(--font-mono);
   color: var(--color-text-light);
 }
@@ -1015,7 +1252,7 @@ main {
 .tx-right {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
+  gap: 0.5rem;
   flex-shrink: 0;
 }
 
@@ -1056,8 +1293,8 @@ main {
 footer {
   background-color: var(--bg-card);
   border-top: 1px solid var(--border-color);
-  padding: 1.5rem 0;
-  margin-top: 3rem;
+  padding: 1.25rem 0;
+  margin-top: 2rem;
   font-size: 0.75rem;
   font-weight: 500;
   color: var(--color-text-light);
@@ -1066,18 +1303,21 @@ footer {
 .footer-container {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 0 1.5rem;
+  padding: 0 1rem;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 1rem;
+  gap: 0.75rem;
+  text-align: center;
 }
 
 @media (min-width: 640px) {
   .footer-container {
+    padding: 0 1.5rem;
     flex-direction: row;
     justify-content: space-between;
     gap: 0;
+    text-align: left;
   }
 }
 
@@ -1093,6 +1333,7 @@ footer {
   border-radius: 50%;
   background-color: var(--color-primary);
   animation: pulse 2s infinite;
+  flex-shrink: 0;
 }
 
 /* Keyframes & Animations */

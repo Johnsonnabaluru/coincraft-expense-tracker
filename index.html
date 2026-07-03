@@ -8,7 +8,7 @@
   <!-- SEO Optimization -->
   <title>CoinCraft - Premium Personal Expense Tracker</title>
   <meta name="description"
-    content="A beautiful, mobile-friendly expense tracker and personal ledger. Keep track of your balances, income, expenses, and visual category breakdowns locally." />
+    content="A beautiful, mobile-friendly expense tracker and personal ledger. Keep track of your balances, income, expenses, payment methods, and visual category breakdowns locally." />
 
   <!-- Stylesheets -->
   <link rel="stylesheet" href="styles.css" />
@@ -102,7 +102,7 @@
           <div class="card-header">
             <div>
               <h3 class="card-title">
-                <i data-lucide="plus-circle"></i>
+                <i data-lucide="clipboard-edit"></i>
                 Add Transaction
               </h3>
             </div>
@@ -157,6 +157,33 @@
               </div>
             </div>
 
+            <!-- Payment Method -->
+            <div class="form-group">
+              <label for="payment-method" class="form-label">Payment Method</label>
+              <div class="payment-method-grid" id="payment-method-grid">
+                <button type="button" class="pm-btn active" data-method="Cash">
+                  <i data-lucide="banknote" style="width: 1rem; height: 1rem;"></i>
+                  <span>Cash</span>
+                </button>
+                <button type="button" class="pm-btn" data-method="Debit Card">
+                  <i data-lucide="credit-card" style="width: 1rem; height: 1rem;"></i>
+                  <span>Debit Card</span>
+                </button>
+                <button type="button" class="pm-btn" data-method="Credit Card">
+                  <i data-lucide="badge-dollar-sign" style="width: 1rem; height: 1rem;"></i>
+                  <span>Credit Card</span>
+                </button>
+                <button type="button" class="pm-btn" data-method="UPI">
+                  <i data-lucide="smartphone" style="width: 1rem; height: 1rem;"></i>
+                  <span>UPI</span>
+                </button>
+                <button type="button" class="pm-btn" data-method="Net Banking">
+                  <i data-lucide="landmark" style="width: 1rem; height: 1rem;"></i>
+                  <span>Net Banking</span>
+                </button>
+              </div>
+            </div>
+
             <!-- Form Validation Message Box -->
             <div id="form-error" class="form-error"></div>
 
@@ -168,7 +195,7 @@
           </form>
         </div>
 
-        <!-- Analytics Chart Box -->
+        <!-- Spending by Category Chart -->
         <div id="category-chart-container" class="card">
           <div class="card-header">
             <h3 class="card-title">
@@ -181,6 +208,22 @@
           <!-- Dynamic Donut Chart or Empty state container -->
           <div id="chart-dynamic-content">
             <!-- JS will render donut chart and category rows here -->
+          </div>
+        </div>
+
+        <!-- Spending by Payment Method Chart -->
+        <div id="payment-chart-container" class="card">
+          <div class="card-header">
+            <h3 class="card-title">
+              <i data-lucide="wallet-cards"></i>
+              How You Pay
+            </h3>
+            <span class="card-subtitle">Expenses by payment method</span>
+          </div>
+
+          <!-- Dynamic Payment Method Chart -->
+          <div id="payment-chart-dynamic-content">
+            <!-- JS will render payment method chart here -->
           </div>
         </div>
       </section>
@@ -204,12 +247,23 @@
         <!-- Filter Toolbar controls -->
         <div class="filters-toolbar">
           <!-- Search bar input -->
-          <div class="search-container">
+          <div class="search-container search-full">
             <span class="search-icon">
               <i data-lucide="search" style="width: 0.875rem; height: 0.875rem;"></i>
             </span>
             <input type="text" id="search-transactions" class="input-field search-input"
               placeholder="Search description..." />
+          </div>
+
+          <!-- Date Range filter -->
+          <div class="date-range-container search-full">
+            <div class="input-container">
+              <input type="date" id="filter-date-from" class="input-field date-input" title="From Date" />
+            </div>
+            <span class="date-separator">to</span>
+            <div class="input-container">
+              <input type="date" id="filter-date-to" class="input-field date-input" title="To Date" />
+            </div>
           </div>
 
           <!-- Type filters select -->
@@ -233,6 +287,21 @@
               <option value="Bills">Bills</option>
               <option value="Shopping">Shopping</option>
               <option value="Other">Other</option>
+            </select>
+            <div class="select-arrow">
+              <i data-lucide="list-filter" style="width: 0.875rem; height: 0.875rem;"></i>
+            </div>
+          </div>
+
+          <!-- Payment Method filter select -->
+          <div class="select-container">
+            <select id="filter-payment" class="select-field">
+              <option value="all">All Methods</option>
+              <option value="Cash">Cash</option>
+              <option value="Debit Card">Debit Card</option>
+              <option value="Credit Card">Credit Card</option>
+              <option value="UPI">UPI</option>
+              <option value="Net Banking">Net Banking</option>
             </select>
             <div class="select-arrow">
               <i data-lucide="list-filter" style="width: 0.875rem; height: 0.875rem;"></i>

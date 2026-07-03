@@ -15,6 +15,7 @@ const INITIAL_SEED_TRANSACTIONS = [
     amount: 3200.00,
     category: 'Other',
     type: 'income',
+    paymentMethod: 'Net Banking',
     date: new Date(Date.now() - 4 * 24 * 60 * 60 * 1000).toISOString(),
   },
   {
@@ -23,6 +24,7 @@ const INITIAL_SEED_TRANSACTIONS = [
     amount: 142.50,
     category: 'Food',
     type: 'expense',
+    paymentMethod: 'Credit Card',
     date: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(),
   },
   {
@@ -31,6 +33,7 @@ const INITIAL_SEED_TRANSACTIONS = [
     amount: 65.00,
     category: 'Transport',
     type: 'expense',
+    paymentMethod: 'Debit Card',
     date: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
   },
   {
@@ -39,14 +42,16 @@ const INITIAL_SEED_TRANSACTIONS = [
     amount: 89.90,
     category: 'Bills',
     type: 'expense',
+    paymentMethod: 'UPI',
     date: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(),
   },
   {
     id: 'seed-5',
-    description: 'Running Shoes Sale',
-    amount: 110.00,
-    category: 'Shopping',
+    description: 'Coffee & Snacks',
+    amount: 15.00,
+    category: 'Food',
     type: 'expense',
+    paymentMethod: 'Cash',
     date: new Date().toISOString(),
   },
 ];
@@ -56,10 +61,14 @@ let state = {
   transactions: [],
   currencySymbol: '$',
   formType: 'expense', // 'expense' | 'income'
+  formPaymentMethod: 'Cash', // Default payment method
   filters: {
     searchQuery: '',
     type: 'all',
     category: 'all',
+    paymentMethod: 'all',
+    dateFrom: '',
+    dateTo: '',
     sortBy: 'newest'
   }
 };
@@ -73,6 +82,15 @@ const categoryIconMap = {
   Other: 'coins'
 };
 
+// Maps payment methods to corresponding Lucide Icon name
+const paymentMethodIconMap = {
+  'Cash': 'banknote',
+  'Debit Card': 'credit-card',
+  'Credit Card': 'badge-dollar-sign',
+  'UPI': 'smartphone',
+  'Net Banking': 'landmark'
+};
+
 // Helper: Get hex color values for categories (for SVG Donut chart rendering)
 function getCategoryColorHex(cat) {
   const colors = {
@@ -83,6 +101,30 @@ function getCategoryColorHex(cat) {
     Other: '#64748b'     // Slate
   };
   return colors[cat] || colors.Other;
+}
+
+// Helper: Get hex color values for payment methods (for SVG Donut chart rendering)
+function getPaymentMethodColorHex(method) {
+  const colors = {
+    'Cash': '#22c55e',       // Green
+    'Debit Card': '#3b82f6', // Blue
+    'Credit Card': '#f43f5e', // Rose
+    'UPI': '#8b5cf6',        // Violet
+    'Net Banking': '#f59e0b' // Amber
+  };
+  return colors[method] || '#64748b';
+}
+
+// Helper: Get CSS class name for payment method badges
+function getPaymentMethodClass(method) {
+  const classes = {
+    'Cash': 'pm-cash',
+    'Debit Card': 'pm-debit',
+    'Credit Card': 'pm-credit',
+    'UPI': 'pm-upi',
+    'Net Banking': 'pm-netbanking'
+  };
+  return classes[method] || '';
 }
 
 // Helper: Format currency matching formatting requirements
@@ -284,6 +326,122 @@ function renderCategoryChart() {
   `;
 }
 
+// Render SVG payment method chart and bars breakdown
+function renderPaymentMethodChart() {
+  const container = document.getElementById('payment-chart-dynamic-content');
+  const expensesOnly = state.transactions.filter(t => t.type === 'expense');
+  const totalExpense = expensesOnly.reduce((sum, t) => sum + t.amount, 0);
+
+  if (totalExpense === 0) {
+    container.innerHTML = `
+      <div class="empty-chart-state">
+        <div class="empty-icon-box">
+          <i data-lucide="wallet-cards" style="width: 1.5rem; height: 1.5rem;"></i>
+        </div>
+        <p class="empty-title">No expenses to display</p>
+        <p class="empty-desc">Your payment method breakdown will appear here once you add some expenses.</p>
+      </div>
+    `;
+    return;
+  }
+
+  // Calculate totals per payment method
+  const methodTotals = { 'Cash': 0, 'Debit Card': 0, 'Credit Card': 0, 'UPI': 0, 'Net Banking': 0 };
+  expensesOnly.forEach(t => {
+    const pm = t.paymentMethod || 'Cash'; // Fallback for old data
+    if (methodTotals[pm] !== undefined) {
+      methodTotals[pm] += t.amount;
+    } else {
+      methodTotals['Cash'] += t.amount;
+    }
+  });
+
+  const METHODS = ['Cash', 'Debit Card', 'Credit Card', 'UPI', 'Net Banking'];
+  const methodData = METHODS.map(method => {
+    const amt = methodTotals[method];
+    const pct = totalExpense > 0 ? (amt / totalExpense) * 100 : 0;
+    return {
+      method: method,
+      amount: amt,
+      percentage: parseFloat(pct.toFixed(1)),
+      colorHex: getPaymentMethodColorHex(method)
+    };
+  }).sort((a, b) => b.amount - a.amount);
+
+  // SVG parameters
+  const radius = 50;
+  const strokeWidth = 12;
+  const circumference = 2 * Math.PI * radius;
+
+  let accumulatedPercent = 0;
+  let circlesHtml = '';
+
+  methodData.filter(d => d.percentage > 0).forEach(d => {
+    const strokeDashOffset = circumference - (d.percentage / 100) * circumference;
+    const rotationAngle = (accumulatedPercent / 100) * 360 - 90; // Align starting position to the top
+    accumulatedPercent += d.percentage;
+
+    circlesHtml += `
+      <circle
+        cx="60"
+        cy="60"
+        r="${radius}"
+        class="donut-segment"
+        stroke="${d.colorHex}"
+        stroke-width="${strokeWidth}"
+        stroke-dasharray="${circumference}"
+        stroke-dashoffset="${strokeDashOffset}"
+        stroke-linecap="round"
+        style="transform-origin: 60px 60px; transform: rotate(${rotationAngle}deg);"
+      />
+    `;
+  });
+
+  let listHtml = '';
+  methodData.forEach(d => {
+    const hasSpending = d.amount > 0;
+    listHtml += `
+      <div class="chart-row">
+        <div class="chart-row-header">
+          <div class="chart-row-category">
+            <span class="category-dot" style="background-color: ${d.colorHex};"></span>
+            <span>${d.method}</span>
+          </div>
+          <div class="chart-row-values">
+            <span>${formatCurrency(d.amount)}</span>
+            ${hasSpending ? `<span class="chart-row-percentage">(${d.percentage}%)</span>` : ''}
+          </div>
+        </div>
+        <div class="chart-bar-container">
+          <div class="chart-bar" style="background-color: ${d.colorHex}; width: ${d.percentage}%;"></div>
+        </div>
+      </div>
+    `;
+  });
+
+  container.innerHTML = `
+    <div class="chart-content">
+      <div class="chart-visual">
+        <div class="donut-svg-wrapper">
+          <svg viewBox="0 0 120 120">
+            <circle cx="60" cy="60" r="${radius}" class="donut-bg" stroke-width="${strokeWidth}" />
+            ${circlesHtml}
+          </svg>
+          <div class="chart-overlay-text">
+            <i data-lucide="wallet" style="width: 1.125rem; height: 1.125rem;"></i>
+            <span class="chart-overlay-label">Total Spent</span>
+            <span class="chart-overlay-value">${formatCurrency(totalExpense)}</span>
+          </div>
+        </div>
+      </div>
+      <div class="chart-list">
+        ${listHtml}
+      </div>
+    </div>
+  `;
+}
+
+
 // Render transactional ledger logs history list
 function renderTransactionList() {
   const scrollArea = document.getElementById('transactions-scroll-area');
@@ -314,7 +472,8 @@ function renderTransactionList() {
     const query = state.filters.searchQuery.toLowerCase();
     filtered = filtered.filter(t =>
       t.description.toLowerCase().includes(query) ||
-      t.category.toLowerCase().includes(query)
+      t.category.toLowerCase().includes(query) ||
+      (t.paymentMethod && t.paymentMethod.toLowerCase().includes(query))
     );
   }
 
@@ -324,6 +483,21 @@ function renderTransactionList() {
 
   if (state.filters.category !== 'all') {
     filtered = filtered.filter(t => t.category === state.filters.category);
+  }
+
+  if (state.filters.paymentMethod !== 'all') {
+    filtered = filtered.filter(t => (t.paymentMethod || 'Cash') === state.filters.paymentMethod);
+  }
+
+  if (state.filters.dateFrom) {
+    const fromDate = new Date(state.filters.dateFrom).getTime();
+    filtered = filtered.filter(t => new Date(t.date).getTime() >= fromDate);
+  }
+
+  if (state.filters.dateTo) {
+    const toDate = new Date(state.filters.dateTo);
+    toDate.setHours(23, 59, 59, 999);
+    filtered = filtered.filter(t => new Date(t.date).getTime() <= toDate.getTime());
   }
 
   // Sort items
@@ -363,6 +537,8 @@ function renderTransactionList() {
     const isExpense = t.type === 'expense';
     const iconName = categoryIconMap[t.category] || 'coins';
     const catClass = t.category.toLowerCase();
+    const paymentMethod = t.paymentMethod || 'Cash';
+    const pmClass = getPaymentMethodClass(paymentMethod);
 
     listHtml += `
       <div id="transaction-item-${t.id}" class="transaction-item">
@@ -374,6 +550,7 @@ function renderTransactionList() {
             <p class="tx-desc" title="${t.description}">${t.description}</p>
             <div class="tx-meta">
               <span class="tx-category-badge">${t.category}</span>
+              <span class="tx-payment-badge ${pmClass}">${paymentMethod}</span>
               <span class="tx-date">${formatDate(t.date)}</span>
             </div>
           </div>
@@ -405,6 +582,7 @@ function renderTransactionList() {
 function render() {
   renderBalanceSummary();
   renderCategoryChart();
+  renderPaymentMethodChart();
   renderTransactionList();
 
   // Trigger Lucide parsing script
@@ -454,6 +632,7 @@ function setupEventListeners() {
     const amount = parseFloat(amtInput.value);
     const category = catSelect.value;
     const type = state.formType;
+    const paymentMethod = state.formPaymentMethod;
 
     if (!description) {
       showFormError('Please enter a description.');
@@ -467,11 +646,12 @@ function setupEventListeners() {
 
     // Add transaction node
     const newTx = {
-      id: crypto.randomUUID ? crypto.randomUUID() : `tx-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+      id: (typeof crypto !== 'undefined' && crypto.randomUUID) ? crypto.randomUUID() : `tx-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
       description,
       amount,
       category,
       type,
+      paymentMethod,
       date: new Date().toISOString()
     };
 
@@ -482,6 +662,7 @@ function setupEventListeners() {
     descInput.value = '';
     amtInput.value = '';
     catSelect.value = 'Food';
+    // Keep the payment method and form type as they were for convenience
 
     render();
   });
@@ -506,6 +687,20 @@ function setupEventListeners() {
     expenseBtn.classList.remove('active');
     submitBtn.className = 'btn-submit income';
     submitBtnText.textContent = 'Save Income';
+  });
+
+  // Payment Method Pill Buttons
+  const pmBtns = document.querySelectorAll('.pm-btn');
+  pmBtns.forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      // Remove active class from all
+      pmBtns.forEach(b => b.classList.remove('active'));
+      // Add active class to clicked
+      const clickedBtn = e.currentTarget;
+      clickedBtn.classList.add('active');
+      // Update state
+      state.formPaymentMethod = clickedBtn.getAttribute('data-method');
+    });
   });
 
   // Global currency selector change trigger
@@ -553,6 +748,30 @@ function setupEventListeners() {
     }
   });
 
+  document.getElementById('filter-payment').addEventListener('change', (e) => {
+    state.filters.paymentMethod = e.target.value;
+    renderTransactionList();
+    if (typeof lucide !== 'undefined') {
+      lucide.createIcons();
+    }
+  });
+
+  document.getElementById('filter-date-from').addEventListener('change', (e) => {
+    state.filters.dateFrom = e.target.value;
+    renderTransactionList();
+    if (typeof lucide !== 'undefined') {
+      lucide.createIcons();
+    }
+  });
+
+  document.getElementById('filter-date-to').addEventListener('change', (e) => {
+    state.filters.dateTo = e.target.value;
+    renderTransactionList();
+    if (typeof lucide !== 'undefined') {
+      lucide.createIcons();
+    }
+  });
+
   document.getElementById('sort-by').addEventListener('change', (e) => {
     state.filters.sortBy = e.target.value;
     renderTransactionList();
@@ -575,7 +794,15 @@ function init() {
   // Load transaction entries from localStorage
   const savedTransactions = localStorage.getItem(STORAGE_KEY);
   if (savedTransactions !== null) {
-    state.transactions = JSON.parse(savedTransactions);
+    let parsed = JSON.parse(savedTransactions);
+    // Migration: add default paymentMethod to old transactions
+    parsed = parsed.map(t => {
+      if (!t.paymentMethod) {
+        t.paymentMethod = 'Cash'; // Default for old data
+      }
+      return t;
+    });
+    state.transactions = parsed;
   } else {
     // Inject seed values on clean entry
     state.transactions = [...INITIAL_SEED_TRANSACTIONS];
