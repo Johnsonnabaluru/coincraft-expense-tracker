@@ -26,3 +26,4 @@ https://coincraft-expense-tracker.vercel.app/
 
 ---
 CoinCraft Expense Tracker © 2026 · Secure Local-First Ledger Engine"# expensetrackercoin" 
+"# expensetrackercoin" 
