@@ -25,4 +25,4 @@ No installation or build step required.
 https://coincraft-expense-tracker.vercel.app/
 
 ---
-CoinCraft Expense Tracker © 2026 · Secure Local-First Ledger Engine
+CoinCraft Expense Tracker © 2026 · Secure Local-First Ledger Engine"# expensetrackercoin" 
